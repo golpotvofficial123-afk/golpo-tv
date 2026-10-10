@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golpo TV - Suno O Poro</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#0f0f0f;color:#fff}
+header{background:#e50914;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.lang{display:flex;gap:6px}
+.lang button{padding:5px 10px;border-radius:15px;border:1px solid #fff;background:transparent;color:#fff;font-size:12px}
+.lang button.active{background:#fff;color:#e50914}
+.ad{background:#222;border:1px dashed #ff0;margin:12px;padding:12px;text-align:center;border-radius:8px;font-size:12px;color:#ff0}
+.search{width:92%;margin:10px 4%;padding:12px 15px;border-radius:25px;border:none;background:#1f1f1f;color:#fff}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;padding:12px}
+.card{background:#1e1e1e;border-radius:12px;padding:12px;display:flex;gap:12px;cursor:pointer}
+.card img{width:80px;height:80px;border-radius:10px;object-fit:cover}
+.card h3{font-size:15px;margin-bottom:4px}
+.card p{font-size:12px;color:#aaa;overflow:hidden}
+#storyPage{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#0f0f0f;z-index:20;overflow:auto;padding-bottom:80px}
+.topBar{padding:12px;background:#1a1a1a;display:flex;justify-content:space-between;position:sticky;top:0}
+.audioBox{background:#1a1a1a;margin:12px;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px}
+.audioBox button{width:45px;height:45px;border-radius:50%;background:#e50914;border:none;color:#fff;font-size:20px}
+.storyText{padding:15px;line-height:1.8;font-size:16px;white-space:pre-line}
+.loginBox{background:#1e1e1e;margin:50px 20px;padding:20px;border-radius:15px;text-align:center}
+.loginBox input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;background:#2a2a2a;color:#fff}
+.loginBox button{width:100%;padding:12px;background:#e50914;border:none;border-radius:8px;color:#fff;font-weight:700;margin-top:10px}
+#loginPage{position:fixed;top:0;left:0;width:100%;height:100%;background:#0f0f0f;z-index:30;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<header>
+<div>📚 GOLPO TV</div>
+<div class="lang">
+<button onclick="setLang('bn')" id="b_bn" class="active">বাং</button>
+<button onclick="setLang('en')" id="b_en">EN</button>
+<button onclick="setLang('hi')" id="b_hi">हि</button>
+</div>
+</header>
+
+<div id="loginPage">
+<div class="loginBox">
+<h2>Login Korun</h2>
+<p style="font-size:12px;color:#aaa;margin:8px 0">Golpo porte/sunte login korun</p>
+<input id="phone" placeholder="Phone / Email ID">
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Login / Sign Up</button>
+</div>
+</div>
+
+<div class="ad">🔥 AD 1 - Ekhane Adsterra Code Bosbe - Earning</div>
+<input class="search" placeholder="Golpo khujun...">
+<div class="grid" id="grid"></div>
+<div class="ad">💰 AD 2 - Golper majhe Ad</div>
+
+<div id="storyPage">
+<div class="topBar"><span onclick="document.getElementById('storyPage').style.display='none'">← Back</span><span id="curLang">BN</span></div>
+<h2 id="sTitle" style="padding:15px 15px 0"></h2>
+<div class="audioBox">
+<button onclick="playAudio()" id="playBtn">▶️</button>
+<div><b>🎧 Golpo Sunun</b><br><small>Auto voice - <span id="langTxt">Bangla</span></small></div>
+</div>
+<div class="ad">AD 3 - Porar Age Ad</div>
+<div class="storyText" id="sText"></div>
+<div class="ad">AD 4 - Ses e Ad</div>
+</div>
+
+<script>
+let curLang='bn';
+let stories=[
+{bn:{t:"Bhuter Bari - Nishir Daak",d:"Raat 12 ta. Gramer sesh barite...",full:"Raat 12 ta. Gramer sesh barite alo jolche...\nTumi ekhane tomar puro golpo likhbe."},en:{t:"Haunted House",d:"Midnight 12. Light is on...",full:"Midnight 12. Light is on in last house..."},hi:{t:"Bhoot Bangla",d:"Raat ke 12 baje...",full:"Raat ke 12 baje. Gaon ke akhri ghar me..."},img:"https://picsum.photos/300/200?1",cat:"Bhoyer Golpo"},
+{bn:{t:"Bhalobasar Golpo",d:"College er prothom din...",full:"College er prothom din. Bristir modhye..."},en:{t:"Love Story",d:"First day of college...",full:"First day..."},hi:{t:"Pyar Ki Kahani",d:"College ka pehla din...",full:"College ka pehla din..."},img:"https://picsum.photos/300/200?2",cat:"Prem"}
+];
+function setLang(l){curLang=l;document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));document.getElementById('b_'+l).classList.add('active');document.getElementById('curLang').innerText=l.toUpperCase();document.getElementById('langTxt').innerText=l=='bn'?'Bangla':l=='en'?'English':'Hindi';render();if(document.getElementById('storyPage').style.display=='block'){openStory(window.lastId)}}
+function render(){let g=document.getElementById('grid');g.innerHTML='';stories.forEach((s,i)=>{let d=s[curLang]||s['bn'];g.innerHTML+=`<div class=card onclick="openStory(${i})"><img src=${s.img}><div><h3>${d.t}</h3><p>${d.d}</p><div style="color:#e50914;font-size:11px">${s.cat} • 🎧 Audio • 📖 Read</div></div></div>`});}
+function openStory(i){window.lastId=i;let s=stories[i];let d=s[curLang]||s['bn'];document.getElementById('sTitle').innerText=d.t;document.getElementById('sText').innerText=d.full;document.getElementById('storyPage').style.display='block';window.speechSynthesis.cancel();}
+function playAudio(){let txt=document.getElementById('sText').innerText;let u=new SpeechSynthesisUtterance(txt);u.lang=curLang=='bn'?'bn-BD':curLang=='hi'?'hi-IN':'en-US';u.rate=0.9;let btn=document.getElementById('playBtn');if(window.speechSynthesis.speaking){window.speechSynthesis.cancel();btn.innerText='▶️';return}btn.innerText='⏸️';u.onend=()=>btn.innerText='▶️';window.speechSynthesis.speak(u);}
+function login(){let p=document.getElementById('phone').value;if(p.length<5){alert('Phone / Email dao');return}localStorage.setItem('golpo_user',p);document.getElementById('loginPage').style.display='none';}
+if(localStorage.getItem('golpo_user')){document.getElementById('loginPage').style.display='none'}
+render();
+</script>
+</body>
+</html>
